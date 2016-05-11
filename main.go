@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -30,5 +31,10 @@ func handler(rw http.ResponseWriter, req *http.Request) {
 
 func main() {
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "80"
+	}
+	http.ListenAndServe(":"+port, nil)
 }
