@@ -10,7 +10,7 @@ import (
 
 func handler(rw http.ResponseWriter, req *http.Request) {
 	s := []string{
-		fmt.Sprintf("%s %s %s", req.Method, req.URL.Path, req.Proto),
+		fmt.Sprintf("%s %s %s %s", req.Method, req.URL.RequestURI(), req.Proto),
 		fmt.Sprintf("Host: %s", req.Host),
 		fmt.Sprintf("Content-Length: %d", req.ContentLength),
 	}
