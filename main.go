@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+    "strconv"
 )
 
 func handler(rw http.ResponseWriter, req *http.Request) {
@@ -26,6 +27,24 @@ func handler(rw http.ResponseWriter, req *http.Request) {
 		s = append(s, "\n"+body)
 	}
 
+	
+	headers := os.Getenv("RESPONSE_HEADERS")
+	if headers != "" {
+        var ss []string
+
+        ss = strings.Split(headers, "\r\n")
+        for _, pair := range ss {
+            z := strings.Split(pair, ":")
+            rw.Header().Set(z[0], z[1])
+        }
+	}
+	
+	status := os.Getenv("STATUS_CODE")
+	if status != "" {
+        statusCode, _ := strconv.Atoi(status)
+        rw.WriteHeader(statusCode)
+	}
+
 	fmt.Fprint(rw, strings.Join(s, "\n"))
 }
 
@@ -36,5 +55,10 @@ func main() {
 	if port == "" {
 		port = "80"
 	}
-	http.ListenAndServe(":"+port, nil)
+
+    if port == "443" {
+        http.ListenAndServeTLS(":"+port, "cert.pem", "cert.key", nil)
+    } else {
+        http.ListenAndServe(":"+port, nil)
+    }
 }
